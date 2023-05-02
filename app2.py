@@ -1,6 +1,6 @@
 #    streamlit run app_name.py --server.port 5998
 
-%%writefile app.py
+# %%writefile app.py
 # ! pip install streamlit
 # import streamlit
 from enum import Enum
