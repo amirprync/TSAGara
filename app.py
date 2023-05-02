@@ -34,8 +34,7 @@ hora = time.strftime("%y%m%d")
 #           use_column_width=False)
 
 st.title("Mini Tablero")
-st.info('\nTablero de automatización para Reinversiones y TSA Garantias
-                    ) 
+st.info('\nTablero de automatización para Reinversiones y TSA Garantias) 
 
 
 # Uploader widget
