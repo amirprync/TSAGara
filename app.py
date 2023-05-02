@@ -1,5 +1,4 @@
 #    streamlit run app_name.py --server.port 5998
-#    git remote add heroku https://github.com/gabrielaranda8/demo_stream.git
 
 from enum import Enum
 from io import BytesIO, StringIO
@@ -35,8 +34,7 @@ hora = time.strftime("%y%m%d")
 #           use_column_width=False)
 
 st.title("Mini Tablero")
-st.info('\nTablero de automatización, podes preguntarme acá [gabriel aranda]('
-                    'https://www.linkedin.com/in/gabriel-alejandro-aranda-02714a151/).\n\n'
+st.info('\nTablero de automatización para Reinversiones y TSA Garantias
                     ) 
 
 
