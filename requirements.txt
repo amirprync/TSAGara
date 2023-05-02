@@ -1,0 +1,6 @@
+pandas
+streamlit==0.69.1
+altair
+lxml
+xlrd
+openpyxl
