@@ -39,15 +39,12 @@ st.info('\nTablero de automatización Reinversion y TSA Garantias('
                     ) 
 
 
-# Uploader widget
 st.sidebar.title("Archivo TSA")
-filename = st.sidebar.file_uploader("Carga tu xlsx de suscri", type=['xlsx'])
+filename = st.sidebar.file_uploader("Carga tu xlsx de suscri", type=['xlsx'], key="tsa_file")
 st.sidebar.markdown("---")
 
-
-
 st.sidebar.title("Archivo ESCO")
-esco = st.sidebar.file_uploader("Carga tu TXT ESCO", type=['txt'])
+esco = st.sidebar.file_uploader("Carga tu TXT ESCO", type=['txt'], key="esco_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Conciliación SENEBI BO")
@@ -55,24 +52,24 @@ st.sidebar.header("Carga el valor del USD, luego ambos XLSX de BO")
 dolar_bo = st.sidebar.text_input("Precio dolar SENEBI BO", 'dolar')
 st.sidebar.markdown("---")
 
-st.sidebar.title("Archivo REINV TSA")
-reinv = st.sidebar.file_uploader("Carga tu xlsx de reinversión", type=['xlsx'])
+st.sidebar.title("Archivo ENTREGA GRTIAS TSA")
+reinv = st.sidebar.file_uploader("Carga tu xlsx de reinversión", type=['xlsx'], key="gracias_tsa_reinv_file")
 st.sidebar.markdown("---")
 
-# st.sidebar.title("Tenencias ACDI para CNV")
-# CNV = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar", type=['xlsx'])
-# st.sidebar.markdown("---")
+st.sidebar.title("Archivo RECEPCION GRTIAS TSA")
+reinv2 = st.sidebar.file_uploader("Carga tu xlsx de reinversión", type=['xlsx'], key="gracias_tsa_reinv2_file")
+st.sidebar.markdown("---")
 
 st.sidebar.title("solo TEST para CNV")
-TEST = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar TEST", type=['xlsx'])
+TEST = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar TEST", type=['xlsx'], key="test_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Conci ESCO vs BO")
-bo = st.sidebar.file_uploader("Carga tu xlsx de FONDOS COHEN de BO !!!!", type=['xlsx'])
+bo = st.sidebar.file_uploader("Carga tu xlsx de FONDOS COHEN de BO !!!!", type=['xlsx'], key="esco_bo_conci_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("LIQUIDACIÓN TSA !!!!!!!!!!!!!!!!!!!!")
-liqui_tsa = st.sidebar.file_uploader("Carga tu xlsx de Transferencias TSA de BO !!!!", type=['xlsx'])
+liqui_tsa = st.sidebar.file_uploader("Carga tu xlsx de Transferencias TSA de BO !!!!", type=['xlsx'], key="tsa_liqui_file")
 st.sidebar.markdown("---")
 
 def download_button(object_to_download, download_filename, button_text, pickle_it=False):
@@ -417,7 +414,7 @@ def main():
             comitente = str(comit)  
             
             if especie!="nan" and cuotas!="nan" and comitente!="nan":
-
+                renta = especie
                 #### ESPECIE ###############################################
                 especie = especie
                 #### COMITENTE #############################################
@@ -426,13 +423,14 @@ def main():
                 cuotas = str(float(cuotas))
 
                 # renta = [["Dolar Renta Local - 10.000","10000"],["Dolar Renta Exterior - 7.000","7000"],["Pesos renta-8000","8000"]]
-                renta = {"Dolar Renta Local - 10.000":"10000","Dolar Renta Exterior - 7.000":"7000","Pesos Renta - 8.000":"8000"}
-
-                if especie in renta:
-                    especie = renta[especie]
+                # renta = {"Dolar Renta Local - 10.000":"10000","Dolar Renta Exterior - 7.000":"7000","Pesos Renta - 8.000":"8000"}
+                  
+                  
+               # if especie in renta:
+               #     especie = renta[especie]
 
                     ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
-                    lista_reinv.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'0046'03'N'00'0000'0000'N"+"\r\n")
+                lista_reinv.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'9046'"+comitente+"'N'00'0000'0000'N"+"\r\n")
        
 
         # LINEA EJEMPLO
@@ -462,6 +460,204 @@ def main():
             print(s)
 
         download_button_str = download_button(s, nuevo, f'Archivo REINV TSA {nuevo}')
+        st.markdown(download_button_str, unsafe_allow_html=True)
+    
+    if reinv2:
+        columnas = ['Comitente Número','Moneda','Importe']
+        tablero = pd.read_excel(reinv2, usecols=columnas, engine='openpyxl')
+        tablero_xls = pd.read_excel(reinv2,engine='openpyxl')
+        comit = tablero['Comitente Número']
+        # st.text(comit)
+
+        st.dataframe(tablero)
+        # st.table(tablero)
+    
+        ################################ EXCEL PREPARACION #############################
+        
+        def crearSheet(archivo):
+            archivo = archivo
+            # print(archivo)
+
+            sheet = {'Fecha Concertacion':[],
+                      'Fecha Vencimiento':[],
+                      'Cuenta':[],
+                      'Concepto':[],
+                      'Debe':[],
+                      'Haber':[],
+                      'Contraparte - Custodia':[],
+                      'Contraparte - Depositante':[],
+                      'Contraparte - Cuenta':[]}
+    
+            for num in archivo.index:
+                # print(num)
+                
+                fecha = datetime.now()
+                fecha = fecha.strftime("%d/%m/%Y")
+
+                sheet['Fecha Concertacion'].append(fecha)         
+                sheet['Fecha Vencimiento'].append(fecha)         
+                sheet['Cuenta'].append(archivo['Comitente Número'][num])         
+                sheet['Concepto'].append(archivo['Tipo'][num])        
+                sheet['Debe'].append('0,00')         
+                sheet['Haber'].append(archivo['Importe'][num])
+                sheet['Contraparte - Custodia'].append('CAJAVAL')
+                sheet['Contraparte - Depositante'].append('0046')
+                sheet['Contraparte - Cuenta'].append(archivo['Comitente Número'][num])
+
+            sheet = pd.DataFrame(sheet)
+            return sheet            
+
+        moneda_7000 = tablero_xls['Moneda'] == 'Dolar Renta Exterior - 7.000' 
+        moneda_10000 = tablero_xls['Moneda'] == 'Dolar Renta Local - 10.000'
+        moneda_8000 = tablero_xls['Moneda'] == 'Pesos Renta - 8.000'
+        nuevo7000 = tablero_xls[moneda_7000]
+        nuevo10000 = tablero_xls[moneda_10000]
+        nuevo8000 = tablero_xls[moneda_8000]
+
+        reinversion_xls = nuevo7000.append(nuevo10000)
+        reinversion_xls = reinversion_xls.append(nuevo8000)
+      
+        reinversion_xls = reinversion_xls.reindex(columns=['Número','Comitente Descripción','Fecha','Moneda','Comitente Número',
+            'Importe','Tipo','Banco','Tipo de Cuenta','Sucursal','Cuenta','CBU','Tipo de identificador impositivo','Número de identificador impositivo',
+            'Titular','Estado'])
+
+        sheet_7000 = crearSheet(nuevo7000.set_index('Número'))
+        sheet_10000 = crearSheet(nuevo10000.set_index('Número'))
+        sheet_8000 = crearSheet(nuevo8000.set_index('Número'))
+
+        with ExcelWriter('REINVERSION_FECHA.xlsx') as writer:
+            reinversion_xls.to_excel(writer,sheet_name='Sheet1',index=False)
+            sheet_7000.to_excel(writer,sheet_name='7000',index=False)  
+            sheet_10000.to_excel(writer,sheet_name='10000',index=False)  
+            sheet_8000.to_excel(writer,sheet_name='8000',index=False)  
+        
+        control_file = 'REINVERSION_FECHA.xlsx'
+        with open(control_file, 'rb') as f:
+            s = f.read()
+
+        download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
+        st.markdown(download_button_str, unsafe_allow_html=True) 
+
+
+        ################### EXCEL SUBIDA A BO ####################
+
+        ############### ESP 7000 ##################################
+
+        with ExcelWriter('7000_FECHA.xlsx') as writer:
+            sheet_7000.to_excel(writer,sheet_name='7000',index=False) 
+        
+        control_file = '7000_FECHA.xlsx'
+        with open(control_file, 'rb') as f:
+            s = f.read()
+
+        download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
+        st.markdown(download_button_str, unsafe_allow_html=True)
+        
+
+        ############### ESP 10000 ##################################
+
+        with ExcelWriter('10000_FECHA.xlsx') as writer:
+            sheet_10000.to_excel(writer,sheet_name='10000',index=False) 
+        
+        control_file = '10000_FECHA.xlsx'
+        with open(control_file, 'rb') as f:
+            s = f.read()
+
+        download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
+        st.markdown(download_button_str, unsafe_allow_html=True)
+
+        ############### ESP 8000 ##################################
+
+        with ExcelWriter('8000_FECHA.xlsx') as writer:
+            sheet_8000.to_excel(writer,sheet_name='8000',index=False) 
+        
+        control_file = '8000_FECHA.xlsx'
+        with open(control_file, 'rb') as f:
+            s = f.read()
+
+        download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
+        st.markdown(download_button_str, unsafe_allow_html=True)   
+
+
+
+
+
+
+
+        ################################ EXCEL PREPARACION #############################
+     
+
+        
+        lista_reinv2= []
+
+        # -----------------PRIMERAS DOS LINEAS OBLIGATORIAS DEL TXT------------------------------------------
+        linea1 = "00Aftfaot    20"+hora+"1130560000000"
+        lista_reinv2.append(linea1)      
+
+        incio = "\r\n"+"0"+hora+"FTFAOT0046"+"\r\n"
+        lista_reinv2.append(incio)
+
+        # -----------------AGREGAMOS LINEAS SEGUN LA CANTIDAD DE SUCRI QUE TENGAMOS-----------------------------------------
+
+        # especie = 5 digitos 
+        # cuotas = 00000000000.0000000  ( 11 y 7) 
+        # comitente = 9 digitos 
+        especie = 0
+        cuotas = 0
+        comitente = 0
+
+        for valor,comit in enumerate(tablero['Comitente Número']):
+            especie = str(tablero['Moneda'][valor])
+            cuotas = str(tablero['Importe'][valor])
+            comitente = str(comit)  
+            
+            if especie!="nan" and cuotas!="nan" and comitente!="nan":
+                renta = especie
+                #### ESPECIE ###############################################
+                especie = especie
+                #### COMITENTE #############################################
+                comitente = str(int(float(comitente)))
+                #### CUOTAS ################################################
+                cuotas = str(float(cuotas))
+
+                # renta = [["Dolar Renta Local - 10.000","10000"],["Dolar Renta Exterior - 7.000","7000"],["Pesos renta-8000","8000"]]
+                # renta = {"Dolar Renta Local - 10.000":"10000","Dolar Renta Exterior - 7.000":"7000","Pesos Renta - 8.000":"8000"}
+                  
+                  
+               # if especie in renta:
+               #     especie = renta[especie]
+
+                    ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
+                lista_reinv2.append("1'I'R'0046'"+comitente+"'"+especie+"       '"+cuotas+"'9046'"+comitente+"'N'00'0000'0000'N"+"\r\n")
+       
+
+        # LINEA EJEMPLO
+        #"1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"
+
+        # ------------------------AGREGAMOS LINEA FINAL---------------------------------------
+
+        # LINEA FINAL
+        num_lineas = len(lista_reinv2)-1 # restamos la primera que no cuenta
+        # print(len(str(num_lineas)))
+        if len(str(num_lineas))==1:
+            num_lineas = "0" + str(num_lineas)
+        linea_final = "99Aftfaot    20"+hora+"1130560000000"+str(num_lineas)+"\r\n"
+        lista_reinv2.append(linea_final)
+
+        # AGREAGR NUMERO DE FILAS A LA PRIMER LINEA
+        lista_reinv2[0] = lista_reinv2[0]+str(num_lineas)
+
+        datos=open("modelo_reinv.txt","w")
+        datos.writelines(lista_reinv2)
+        datos.close()
+
+
+        nuevo = "modelo_reinv.txt"
+        with open(nuevo, 'rb') as f:
+            s = f.read()
+            print(s)
+
+        download_button_str = download_button(s, nuevo, f'Archivo reinv2 TSA {nuevo}')
         st.markdown(download_button_str, unsafe_allow_html=True)
     
     if dolar_bo!='dolar':
