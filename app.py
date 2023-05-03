@@ -757,7 +757,7 @@ def main():
             download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
             st.markdown(download_button_str, unsafe_allow_html=True)  
 
-    st.sidebar.info('\nEsta app fue creada usando Streamlit y es mantenida por [gabriel aranda]('
+    st.sidebar.info('\nCOHEN('
                     'https://www.linkedin.com/in/gabriel-alejandro-aranda-02714a151/).\n\n'
                     ) 
     
