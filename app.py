@@ -517,7 +517,8 @@ def main():
 
         # reinversion_xls = nuevo7000.append(nuevo10000)
         reinversion_xls = pd.concat([nuevo7000, nuevo10000], ignore_index=True)
-        reinversion_xls = reinversion_xls.append(nuevo8000)
+        # reinversion_xls = reinversion_xls.append(nuevo8000)
+        reinversion_xls = pd.concat([reinversion_xls, nuevo8000], ignore_index=True)
       
         reinversion_xls = reinversion_xls.reindex(columns=['Número','Comitente Descripción','Fecha','Moneda','Comitente Número',
             'Importe','Tipo','Banco','Tipo de Cuenta','Sucursal','Cuenta','CBU','Tipo de identificador impositivo','Número de identificador impositivo',
