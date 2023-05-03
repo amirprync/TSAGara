@@ -758,7 +758,7 @@ def main():
             st.markdown(download_button_str, unsafe_allow_html=True)  
 
     st.sidebar.info('\nCOHEN('
-                    'https://www.linkedin.com/in/gabriel-alejandro-aranda-02714a151/).\n\n'
+                    'https://www.cohen.com.ar/).\n\n'
                     ) 
     
     if TEST:
