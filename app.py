@@ -39,16 +39,12 @@ st.info('\nTablero de automatización TSA GARANTIAS y REVINVERSION('
                     'https://cohen.com.ar/).\n\n'
                     ) 
 
-
-# Uploader widget
 st.sidebar.title("Archivo TSA")
-filename = st.sidebar.file_uploader("Carga tu xlsx de suscri", type=['xlsx'])
+filename = st.sidebar.file_uploader("Carga tu xlsx de suscri", type=['xlsx'], key="tsa_file")
 st.sidebar.markdown("---")
 
-
-
 st.sidebar.title("Archivo ESCO")
-esco = st.sidebar.file_uploader("Carga tu TXT ESCO", type=['txt'])
+esco = st.sidebar.file_uploader("Carga tu TXT ESCO", type=['txt'], key="esco_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Conciliación SENEBI BO")
@@ -56,24 +52,24 @@ st.sidebar.header("Carga el valor del USD, luego ambos XLSX de BO")
 dolar_bo = st.sidebar.text_input("Precio dolar SENEBI BO", 'dolar')
 st.sidebar.markdown("---")
 
-st.sidebar.title("Archivo REINV TSA")
-reinv = st.sidebar.file_uploader("Carga tu xlsx de reinversión", type=['xlsx'])
+st.sidebar.title("Archivo ENTREGA GRTIAS TSA")
+reinv = st.sidebar.file_uploader("Carga tu xlsx de reinversión", type=['xlsx'], key="gracias_tsa_reinv_file")
 st.sidebar.markdown("---")
 
-# st.sidebar.title("Tenencias ACDI para CNV")
-# CNV = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar", type=['xlsx'])
-# st.sidebar.markdown("---")
+st.sidebar.title("Archivo RECEPCION GRTIAS TSA")
+reinv2 = st.sidebar.file_uploader("Carga tu xlsx de reinversión", type=['xlsx'], key="gracias_tsa_reinv2_file")
+st.sidebar.markdown("---")
 
 st.sidebar.title("solo TEST para CNV")
-TEST = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar TEST", type=['xlsx'])
+TEST = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar TEST", type=['xlsx'], key="test_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Conci ESCO vs BO")
-bo = st.sidebar.file_uploader("Carga tu xlsx de FONDOS COHEN de BO !!!!", type=['xlsx'])
+bo = st.sidebar.file_uploader("Carga tu xlsx de FONDOS COHEN de BO !!!!", type=['xlsx'], key="esco_bo_conci_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("LIQUIDACIÓN TSA !!!!!!!!!!!!!!!!!!!!")
-liqui_tsa = st.sidebar.file_uploader("Carga tu xlsx de Transferencias TSA de BO !!!!", type=['xlsx'])
+liqui_tsa = st.sidebar.file_uploader("Carga tu xlsx de Transferencias TSA de BO !!!!", type=['xlsx'], key="tsa_liqui_file")
 st.sidebar.markdown("---")
 
 def download_button(object_to_download, download_filename, button_text, pickle_it=False):
@@ -132,7 +128,7 @@ def download_button(object_to_download, download_filename, button_text, pickle_i
         </style> """
     # print(b64)
     dl_link = custom_css + f'<a download="{download_filename}" id="{button_id}" href="data:file/txt;base64,{b64}">{button_text}</a><br></br>'
-
+    
     return dl_link
 
 
@@ -146,10 +142,10 @@ def main():
 
         st.dataframe(tablero)
         # st.table(tablero)
+    
+     
 
-
-
-
+        
         lista_suscri= []
 
         # -----------------PRIMERAS DOS LINEAS OBLIGATORIAS DEL TXT------------------------------------------
@@ -172,7 +168,7 @@ def main():
             especie = str(tablero['CodigoCaja'][valor])
             cuotas = str(tablero['Cuotas'][valor])
             comitente = str(comit)  
-
+            
             if especie!="nan" and cuotas!="nan" and comitente!="nan":
 
                 #### ESPECIE ###############################################
@@ -181,10 +177,10 @@ def main():
                 comitente = str(int(float(comitente)))
                 #### CUOTAS ################################################
                 cuotas = str(float(cuotas))
-
+                
                 ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
                 lista_suscri.append("1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"+"\r\n")
-
+       
 
         # LINEA EJEMPLO
         #"1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"
@@ -216,7 +212,7 @@ def main():
         st.markdown(download_button_str, unsafe_allow_html=True)
 
         # os.remove("suscri_tsa1.txt")
-
+    
     if esco:
         df = esco.read()
         archivo = df.decode('utf-8')
@@ -227,7 +223,7 @@ def main():
 
         lista_suscri = []
         lista_rescate = []
-
+        
         f = archivo.split(sep=None, maxsplit=-1)
 
         for x in f:
@@ -238,19 +234,19 @@ def main():
                 if valid!=";":   
                     linea = x[8:-20]+"\r\n"
                     lista_suscri.append(linea)
-
+                          
             elif tipo=="R":
                 valid = x[8]
                 if valid!=";":
                     linea2 = x[8:]+";"+"\r\n"
                     lista_rescate.append(linea2)
-
+                   
 
         suscri.writelines(lista_suscri)          
         rescate.writelines(lista_rescate)          
         suscri.close()
         rescate.close()
-
+        
 
 
         suscri_file = "suscri.txt"
@@ -277,9 +273,9 @@ def main():
 
         st.dataframe(tablero)
         # st.table(tablero)
-
+    
         ################################ EXCEL PREPARACION #############################
-
+        
         def crearSheet(archivo):
             archivo = archivo
             # print(archivo)
@@ -293,10 +289,10 @@ def main():
                       'Contraparte - Custodia':[],
                       'Contraparte - Depositante':[],
                       'Contraparte - Cuenta':[]}
-
+    
             for num in archivo.index:
                 # print(num)
-
+                
                 fecha = datetime.now()
                 fecha = fecha.strftime("%d/%m/%Y")
 
@@ -320,10 +316,9 @@ def main():
         nuevo10000 = tablero_xls[moneda_10000]
         nuevo8000 = tablero_xls[moneda_8000]
 
-        # reinversion_xls = nuevo7000.append(nuevo10000)
-        reinversion_xls = pd.concat([nuevo7000, nuevo10000], ignore_index=True)
+        reinversion_xls = nuevo7000.append(nuevo10000)
         reinversion_xls = reinversion_xls.append(nuevo8000)
-
+      
         reinversion_xls = reinversion_xls.reindex(columns=['Número','Comitente Descripción','Fecha','Moneda','Comitente Número',
             'Importe','Tipo','Banco','Tipo de Cuenta','Sucursal','Cuenta','CBU','Tipo de identificador impositivo','Número de identificador impositivo',
             'Titular','Estado'])
@@ -337,7 +332,7 @@ def main():
             sheet_7000.to_excel(writer,sheet_name='7000',index=False)  
             sheet_10000.to_excel(writer,sheet_name='10000',index=False)  
             sheet_8000.to_excel(writer,sheet_name='8000',index=False)  
-
+        
         control_file = 'REINVERSION_FECHA.xlsx'
         with open(control_file, 'rb') as f:
             s = f.read()
@@ -352,20 +347,20 @@ def main():
 
         with ExcelWriter('7000_FECHA.xlsx') as writer:
             sheet_7000.to_excel(writer,sheet_name='7000',index=False) 
-
+        
         control_file = '7000_FECHA.xlsx'
         with open(control_file, 'rb') as f:
             s = f.read()
 
         download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
         st.markdown(download_button_str, unsafe_allow_html=True)
-
+        
 
         ############### ESP 10000 ##################################
 
         with ExcelWriter('10000_FECHA.xlsx') as writer:
             sheet_10000.to_excel(writer,sheet_name='10000',index=False) 
-
+        
         control_file = '10000_FECHA.xlsx'
         with open(control_file, 'rb') as f:
             s = f.read()
@@ -377,7 +372,7 @@ def main():
 
         with ExcelWriter('8000_FECHA.xlsx') as writer:
             sheet_8000.to_excel(writer,sheet_name='8000',index=False) 
-
+        
         control_file = '8000_FECHA.xlsx'
         with open(control_file, 'rb') as f:
             s = f.read()
@@ -392,9 +387,9 @@ def main():
 
 
         ################################ EXCEL PREPARACION #############################
+     
 
-
-
+        
         lista_reinv= []
 
         # -----------------PRIMERAS DOS LINEAS OBLIGATORIAS DEL TXT------------------------------------------
@@ -417,9 +412,9 @@ def main():
             especie = str(tablero['Moneda'][valor])
             cuotas = str(tablero['Importe'][valor])
             comitente = str(comit)  
-
+            
             if especie!="nan" and cuotas!="nan" and comitente!="nan":
-
+                renta = especie
                 #### ESPECIE ###############################################
                 especie = especie
                 #### COMITENTE #############################################
@@ -428,14 +423,15 @@ def main():
                 cuotas = str(float(cuotas))
 
                 # renta = [["Dolar Renta Local - 10.000","10000"],["Dolar Renta Exterior - 7.000","7000"],["Pesos renta-8000","8000"]]
-                renta = {"Dolar Renta Local - 10.000":"10000","Dolar Renta Exterior - 7.000":"7000","Pesos Renta - 8.000":"8000"}
-
-                if especie in renta:
-                    especie = renta[especie]
+                # renta = {"Dolar Renta Local - 10.000":"10000","Dolar Renta Exterior - 7.000":"7000","Pesos Renta - 8.000":"8000"}
+                  
+                  
+               # if especie in renta:
+               #     especie = renta[especie]
 
                     ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
-                    lista_reinv.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'0046'03'N'00'0000'0000'N"+"\r\n")
-
+                lista_reinv.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'9046'"+comitente+"'N'00'0000'0000'N"+"\r\n")
+       
 
         # LINEA EJEMPLO
         #"1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"
@@ -465,6 +461,204 @@ def main():
 
         download_button_str = download_button(s, nuevo, f'Archivo REINV TSA {nuevo}')
         st.markdown(download_button_str, unsafe_allow_html=True)
+    
+    if reinv2:
+        columnas = ['Comitente Número','Moneda','Importe']
+        tablero = pd.read_excel(reinv2, usecols=columnas, engine='openpyxl')
+        tablero_xls = pd.read_excel(reinv2,engine='openpyxl')
+        comit = tablero['Comitente Número']
+        # st.text(comit)
+
+        st.dataframe(tablero)
+        # st.table(tablero)
+    
+        ################################ EXCEL PREPARACION #############################
+        
+        def crearSheet(archivo):
+            archivo = archivo
+            # print(archivo)
+
+            sheet = {'Fecha Concertacion':[],
+                      'Fecha Vencimiento':[],
+                      'Cuenta':[],
+                      'Concepto':[],
+                      'Debe':[],
+                      'Haber':[],
+                      'Contraparte - Custodia':[],
+                      'Contraparte - Depositante':[],
+                      'Contraparte - Cuenta':[]}
+    
+            for num in archivo.index:
+                # print(num)
+                
+                fecha = datetime.now()
+                fecha = fecha.strftime("%d/%m/%Y")
+
+                sheet['Fecha Concertacion'].append(fecha)         
+                sheet['Fecha Vencimiento'].append(fecha)         
+                sheet['Cuenta'].append(archivo['Comitente Número'][num])         
+                sheet['Concepto'].append(archivo['Tipo'][num])        
+                sheet['Debe'].append('0,00')         
+                sheet['Haber'].append(archivo['Importe'][num])
+                sheet['Contraparte - Custodia'].append('CAJAVAL')
+                sheet['Contraparte - Depositante'].append('0046')
+                sheet['Contraparte - Cuenta'].append(archivo['Comitente Número'][num])
+
+            sheet = pd.DataFrame(sheet)
+            return sheet            
+
+        moneda_7000 = tablero_xls['Moneda'] == 'Dolar Renta Exterior - 7.000' 
+        moneda_10000 = tablero_xls['Moneda'] == 'Dolar Renta Local - 10.000'
+        moneda_8000 = tablero_xls['Moneda'] == 'Pesos Renta - 8.000'
+        nuevo7000 = tablero_xls[moneda_7000]
+        nuevo10000 = tablero_xls[moneda_10000]
+        nuevo8000 = tablero_xls[moneda_8000]
+
+        reinversion_xls = nuevo7000.append(nuevo10000)
+        reinversion_xls = reinversion_xls.append(nuevo8000)
+      
+        reinversion_xls = reinversion_xls.reindex(columns=['Número','Comitente Descripción','Fecha','Moneda','Comitente Número',
+            'Importe','Tipo','Banco','Tipo de Cuenta','Sucursal','Cuenta','CBU','Tipo de identificador impositivo','Número de identificador impositivo',
+            'Titular','Estado'])
+
+        sheet_7000 = crearSheet(nuevo7000.set_index('Número'))
+        sheet_10000 = crearSheet(nuevo10000.set_index('Número'))
+        sheet_8000 = crearSheet(nuevo8000.set_index('Número'))
+
+        with ExcelWriter('REINVERSION_FECHA.xlsx') as writer:
+            reinversion_xls.to_excel(writer,sheet_name='Sheet1',index=False)
+            sheet_7000.to_excel(writer,sheet_name='7000',index=False)  
+            sheet_10000.to_excel(writer,sheet_name='10000',index=False)  
+            sheet_8000.to_excel(writer,sheet_name='8000',index=False)  
+        
+        control_file = 'REINVERSION_FECHA.xlsx'
+        with open(control_file, 'rb') as f:
+            s = f.read()
+
+        download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
+        st.markdown(download_button_str, unsafe_allow_html=True) 
+
+
+        ################### EXCEL SUBIDA A BO ####################
+
+        ############### ESP 7000 ##################################
+
+        with ExcelWriter('7000_FECHA.xlsx') as writer:
+            sheet_7000.to_excel(writer,sheet_name='7000',index=False) 
+        
+        control_file = '7000_FECHA.xlsx'
+        with open(control_file, 'rb') as f:
+            s = f.read()
+
+        download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
+        st.markdown(download_button_str, unsafe_allow_html=True)
+        
+
+        ############### ESP 10000 ##################################
+
+        with ExcelWriter('10000_FECHA.xlsx') as writer:
+            sheet_10000.to_excel(writer,sheet_name='10000',index=False) 
+        
+        control_file = '10000_FECHA.xlsx'
+        with open(control_file, 'rb') as f:
+            s = f.read()
+
+        download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
+        st.markdown(download_button_str, unsafe_allow_html=True)
+
+        ############### ESP 8000 ##################################
+
+        with ExcelWriter('8000_FECHA.xlsx') as writer:
+            sheet_8000.to_excel(writer,sheet_name='8000',index=False) 
+        
+        control_file = '8000_FECHA.xlsx'
+        with open(control_file, 'rb') as f:
+            s = f.read()
+
+        download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
+        st.markdown(download_button_str, unsafe_allow_html=True)   
+
+
+
+
+
+
+
+        ################################ EXCEL PREPARACION #############################
+     
+
+        
+        lista_reinv2= []
+
+        # -----------------PRIMERAS DOS LINEAS OBLIGATORIAS DEL TXT------------------------------------------
+        linea1 = "00Aftfaot    20"+hora+"1130560000000"
+        lista_reinv2.append(linea1)      
+
+        incio = "\r\n"+"0"+hora+"FTFAOT0046"+"\r\n"
+        lista_reinv2.append(incio)
+
+        # -----------------AGREGAMOS LINEAS SEGUN LA CANTIDAD DE SUCRI QUE TENGAMOS-----------------------------------------
+
+        # especie = 5 digitos 
+        # cuotas = 00000000000.0000000  ( 11 y 7) 
+        # comitente = 9 digitos 
+        especie = 0
+        cuotas = 0
+        comitente = 0
+
+        for valor,comit in enumerate(tablero['Comitente Número']):
+            especie = str(tablero['Moneda'][valor])
+            cuotas = str(tablero['Importe'][valor])
+            comitente = str(comit)  
+            
+            if especie!="nan" and cuotas!="nan" and comitente!="nan":
+                renta = especie
+                #### ESPECIE ###############################################
+                especie = especie
+                #### COMITENTE #############################################
+                comitente = str(int(float(comitente)))
+                #### CUOTAS ################################################
+                cuotas = str(float(cuotas))
+
+                # renta = [["Dolar Renta Local - 10.000","10000"],["Dolar Renta Exterior - 7.000","7000"],["Pesos renta-8000","8000"]]
+                # renta = {"Dolar Renta Local - 10.000":"10000","Dolar Renta Exterior - 7.000":"7000","Pesos Renta - 8.000":"8000"}
+                  
+                  
+               # if especie in renta:
+               #     especie = renta[especie]
+
+                    ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
+                lista_reinv2.append("1'I'R'0046'"+comitente+"'"+especie+"       '"+cuotas+"'9046'"+comitente+"'N'00'0000'0000'N"+"\r\n")
+       
+
+        # LINEA EJEMPLO
+        #"1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"
+
+        # ------------------------AGREGAMOS LINEA FINAL---------------------------------------
+
+        # LINEA FINAL
+        num_lineas = len(lista_reinv2)-1 # restamos la primera que no cuenta
+        # print(len(str(num_lineas)))
+        if len(str(num_lineas))==1:
+            num_lineas = "0" + str(num_lineas)
+        linea_final = "99Aftfaot    20"+hora+"1130560000000"+str(num_lineas)+"\r\n"
+        lista_reinv2.append(linea_final)
+
+        # AGREAGR NUMERO DE FILAS A LA PRIMER LINEA
+        lista_reinv2[0] = lista_reinv2[0]+str(num_lineas)
+
+        datos=open("modelo_reinv.txt","w")
+        datos.writelines(lista_reinv2)
+        datos.close()
+
+
+        nuevo = "modelo_reinv.txt"
+        with open(nuevo, 'rb') as f:
+            s = f.read()
+            print(s)
+
+        download_button_str = download_button(s, nuevo, f'Archivo reinv2 TSA {nuevo}')
+        st.markdown(download_button_str, unsafe_allow_html=True)
 
     if dolar_bo!='dolar':
         # if control_boletos:
@@ -475,7 +669,7 @@ def main():
         arancel = st.file_uploader("Carga tu xlsx ARANCELES", type=['xlsx'])   
         ################################################################################################################################
         columnas = ["Tipo de Operación","Número de Boleto","Comitente - Número","Fecha de concertación","Instrumento - Símbolo","Cantidad","Moneda","Bruto"]
-
+        
 
         if control_boletos and arancel:
             aranceles = pd.read_excel(arancel, engine='openpyxl')
@@ -506,7 +700,7 @@ def main():
             datos = pd.DataFrame(datos, columns=columnas)
 
 
-
+                
 
             # print(datos)
 
@@ -562,7 +756,7 @@ def main():
     st.sidebar.info('\nEsta app fue creada usando Streamlit y es mantenida por [gabriel aranda]('
                     'https://www.linkedin.com/in/gabriel-alejandro-aranda-02714a151/).\n\n'
                     ) 
-
+    
     if TEST:
         test_fondos = pd.read_excel(TEST, engine='openpyxl')
 
@@ -617,9 +811,9 @@ def main():
         def conciliarEsco(archivo_bo,archivo_esco):
             archivo_esco = archivo_esco
             archivo_bo = archivo_bo
-
+            
             conci_LISTA_esco = {'NOMBRE':[],'COMITENTE':[],'CP QUE FALTAN EN BO':[]}
-
+            
             for comitente in archivo_esco.index:
 
                 esco_cp = archivo_esco.loc[comitente]
@@ -627,7 +821,7 @@ def main():
                 esco_cp = esco_cp['Cuotapartes']
 
                 if esco_cp > 0:
-
+                    
                     if comitente in archivo_bo.index:
 
                         bo_cp = archivo_bo.loc[comitente]
@@ -638,13 +832,13 @@ def main():
                             conci_LISTA_esco['COMITENTE'].append(comitente)
                             conci_LISTA_esco['NOMBRE'].append(esco_nombre)
                             conci_LISTA_esco['CP QUE FALTAN EN BO'].append('COINCIDE EXACTO')
-
+                        
                         else:
                             dif = esco_cp - bo_cp
                             conci_LISTA_esco['COMITENTE'].append(comitente)
                             conci_LISTA_esco['NOMBRE'].append(esco_nombre)
                             conci_LISTA_esco['CP QUE FALTAN EN BO'].append(dif)
-
+                        
                     else: 
                         conci_LISTA_esco['COMITENTE'].append(comitente)
                         conci_LISTA_esco['NOMBRE'].append(esco_nombre)
@@ -653,7 +847,7 @@ def main():
             return conci_LISTA_esco            
 
         def conciliarBO(archivo_bo,archivo_esco):
-
+            
             archivo_esco = archivo_esco
             archivo_bo = archivo_bo
 
@@ -666,7 +860,7 @@ def main():
                 bo_cp = bo_cp['Saldo Total']
 
                 if bo_cp > 0:
-
+                    
                     if comitente in archivo_esco.index:
 
                         esco_cp = archivo_esco.loc[comitente]
@@ -682,7 +876,7 @@ def main():
                             conci_LISTA_bo['COMITENTE'].append(comitente)
                             conci_LISTA_bo['NOMBRE'].append(bo_nombre)
                             conci_LISTA_bo['CP QUE FALTAN EN ESCO'].append(dif)
-
+                        
                     else: 
                         conci_LISTA_bo['COMITENTE'].append(comitente)
                         conci_LISTA_bo['NOMBRE'].append(bo_nombre)
@@ -691,26 +885,26 @@ def main():
             return conci_LISTA_bo     
 
         if archivo_esco_plus:
-
+            
             ######### Descarto las columnas que no me sirven y dejo limpio el excel ##########
             archivo_esco_plus = pd.read_excel(archivo_esco_plus)
             archivo_esco_plus.set_axis(['0', 'Clase', 'Número','Nombre','4','5','Cuotapartes'], 
                     axis='columns', inplace=True)
             nuevo = archivo_esco_plus.drop([0,1,2,3],axis=0)
             # data.loc[1,2[columna,columna]]
-
+            
 
             ########### PRIMERO FILTRAMOS POR LOS PLUS A #######################
             plus_a = nuevo['Clase'] == 'A - Minorista'
             plusa = nuevo[plus_a].set_index('Número')
-
+           
             plusbo = archivo_bo['Instrumento - Símbolo'] == 'PLUS'
             plus_BO = archivo_bo[plusbo].set_index('Cuenta - Nro') 
 
             archivo_plusA_esco = conciliarEsco(plus_BO,plusa)
             archivo_plusA_bo = conciliarBO(plus_BO,plusa)
-
-
+            
+           
             ################ HACEMOS LA CONCI CREANDO UN NUEVO DATAFRAME ##############  
 
             ########### LUEGO FILTRAMOS POR LOS PLUS B #######################
@@ -719,11 +913,11 @@ def main():
 
             plusBbo = archivo_bo['Instrumento - Símbolo'] == 'PLUSB'
             plusB_BO = archivo_bo[plusBbo].set_index('Cuenta - Nro')
-
+            
             archivo_plusB_esco = conciliarEsco(plusB_BO,plusB)
             archivo_plusB_bo = conciliarBO(plusB_BO,plusB)
 
-
+            
             conci_lista_plusa_esco = pd.DataFrame(archivo_plusA_esco)
             conci_lista_plusa_bo = pd.DataFrame(archivo_plusA_bo)
             conci_lista_plusB_esco = pd.DataFrame(archivo_plusB_esco)
@@ -734,7 +928,7 @@ def main():
                 conci_lista_plusa_bo.to_excel(writer,sheet_name='PLUSA_BO',index=False)  
                 conci_lista_plusB_esco.to_excel(writer,sheet_name='PLUSB_ESCO',index=False)  
                 conci_lista_plusB_bo.to_excel(writer,sheet_name='PLUSB_BO',index=False)  
-
+            
             control_file = 'CONCI_PLUS_COHEN.xlsx'
             with open(control_file, 'rb') as f:
                 s = f.read()
@@ -743,19 +937,19 @@ def main():
             st.markdown(download_button_str, unsafe_allow_html=True)  
 
         if archivo_esco_crf:
-
+            
             ######### Descarto las columnas que no me sirven y dejo limpio el excel ##########
             archivo_esco_crf = pd.read_excel(archivo_esco_crf)
             archivo_esco_crf.set_axis(['0', 'Clase', 'Número','Nombre','4','5','Cuotapartes'], 
                     axis='columns', inplace=True)
             nuevo = archivo_esco_crf.drop([0,1,2,3],axis=0)
             # data.loc[1,2[columna,columna]]
-
+            
 
             ########### PRIMERO FILTRAMOS POR LOS CRF A #######################
             crf_a = nuevo['Clase'] == 'A - Fisicas'
             crfa = nuevo[crf_a].set_index('Número')
-
+           
             crfbo = archivo_bo['Instrumento - Símbolo'] == 'CRF'
             crf_BO = archivo_bo[crfbo].set_index('Cuenta - Nro') 
 
@@ -768,7 +962,7 @@ def main():
 
             crfBbo = archivo_bo['Instrumento - Símbolo'] == 'CRFB'
             crfB_BO = archivo_bo[crfBbo].set_index('Cuenta - Nro')
-
+            
             archivo_crfB_esco = conciliarEsco(crfB_BO,CRFB)
             archivo_crfB_bo = conciliarBO(crfB_BO,CRFB)
 
@@ -778,7 +972,7 @@ def main():
 
             crfCbo = archivo_bo['Instrumento - Símbolo'] == 'CRFC'
             crfC_BO = archivo_bo[crfCbo].set_index('Cuenta - Nro')
-
+            
             archivo_crfC_esco = conciliarEsco(crfC_BO,CRFC)
             archivo_crfC_bo = conciliarBO(crfC_BO,CRFC)
 
@@ -788,11 +982,11 @@ def main():
 
             crfDbo = archivo_bo['Instrumento - Símbolo'] == 'CRFD'
             crfD_BO = archivo_bo[crfDbo].set_index('Cuenta - Nro')
-
+            
             archivo_crfD_esco = conciliarEsco(crfD_BO,CRFD)
             archivo_crfD_bo = conciliarBO(crfD_BO,CRFD)
 
-
+            
             conci_lista_crfa_esco = pd.DataFrame(archivo_crfA_esco)
             conci_lista_crfa_bo = pd.DataFrame(archivo_crfA_bo)
             conci_lista_crfB_esco = pd.DataFrame(archivo_crfB_esco)
@@ -811,7 +1005,7 @@ def main():
                 conci_lista_crfC_bo.to_excel(writer,sheet_name='CRFC_BO',index=False)  
                 conci_lista_crfD_esco.to_excel(writer,sheet_name='CRFD_ESCO',index=False)  
                 conci_lista_crfD_bo.to_excel(writer,sheet_name='CRFD_BO',index=False)  
-
+            
             control_file = 'CONCI_CRF_COHEN.xlsx'
             with open(control_file, 'rb') as f:
                 s = f.read()
@@ -820,19 +1014,19 @@ def main():
             st.markdown(download_button_str, unsafe_allow_html=True)    
 
         if archivo_esco_crfDOL:
-
+            
             ######### Descarto las columnas que no me sirven y dejo limpio el excel ##########
             archivo_esco_crfDOL = pd.read_excel(archivo_esco_crfDOL)
             archivo_esco_crfDOL.set_axis(['0', 'Clase', 'Número','Nombre','4','5','Cuotapartes'], 
                     axis='columns', inplace=True)
             nuevo = archivo_esco_crfDOL.drop([0,1,2,3],axis=0)
             # data.loc[1,2[columna,columna]]
-
+            
 
             ########### PRIMERO FILTRAMOS POR LOS CRF DOL A #######################
             crf_DOLa = nuevo['Clase'] == 'A - Fis'
             crfDOLa = nuevo[crf_DOLa].set_index('Número')
-
+           
             crfDOLAbo = archivo_bo['Instrumento - Símbolo'] == 'CRF DOL'
             crf_DOLABO = archivo_bo[crfDOLAbo].set_index('Cuenta - Nro') 
 
@@ -845,7 +1039,7 @@ def main():
 
             crfDOLBbo = archivo_bo['Instrumento - Símbolo'] == 'CRF DOL B'
             crfDOLB_BO = archivo_bo[crfDOLBbo].set_index('Cuenta - Nro')
-
+            
             archivo_crfDOLB_esco = conciliarEsco(crfDOLB_BO,CRFDOLB)
             archivo_crfDOLB_bo = conciliarBO(crfDOLB_BO,CRFDOLB)
 
@@ -855,18 +1049,18 @@ def main():
 
             crfDOLIbo = archivo_bo['Instrumento - Símbolo'] == 'CRF DOL I'
             crfDOLI_BO = archivo_bo[crfDOLIbo].set_index('Cuenta - Nro')
-
+            
             archivo_crfDOLI_esco = conciliarEsco(crfDOLI_BO,CRFDOLI)
             archivo_crfDOLI_bo = conciliarBO(crfDOLI_BO,CRFDOLI)
 
-
+            
             conci_lista_crfDOLa_esco = pd.DataFrame(archivo_crfDOLA_esco)
             conci_lista_crfDOLa_bo = pd.DataFrame(archivo_crfDOLA_bo)
             conci_lista_crfDOLB_esco = pd.DataFrame(archivo_crfDOLB_esco)
             conci_lista_crfDOLB_bo = pd.DataFrame(archivo_crfDOLB_bo)
             conci_lista_crfDOLI_esco = pd.DataFrame(archivo_crfDOLI_esco)
             conci_lista_crfDOLI_bo = pd.DataFrame(archivo_crfDOLI_bo)
-
+            
             with ExcelWriter('CONCI_CRFDOL_COHEN.xlsx') as writer:
                 conci_lista_crfDOLa_esco.to_excel(writer,sheet_name='CRFDOLA_ESCO',index=False)
                 conci_lista_crfDOLa_bo.to_excel(writer,sheet_name='CRFDOLA_BO',index=False)  
@@ -874,7 +1068,7 @@ def main():
                 conci_lista_crfDOLB_bo.to_excel(writer,sheet_name='CRFDOLB_BO',index=False)  
                 conci_lista_crfDOLI_esco.to_excel(writer,sheet_name='CRFDOLI_ESCO',index=False)  
                 conci_lista_crfDOLI_bo.to_excel(writer,sheet_name='CRFDOLI_BO',index=False)   
-
+            
             control_file = 'CONCI_CRFDOL_COHEN.xlsx'
             with open(control_file, 'rb') as f:
                 s = f.read()
@@ -883,26 +1077,26 @@ def main():
             st.markdown(download_button_str, unsafe_allow_html=True)           
 
         if archivo_esco_crfPYMES:
-
+            
             ######### Descarto las columnas que no me sirven y dejo limpio el excel ##########
             archivo_esco_crfPYMES = pd.read_excel(archivo_esco_crfPYMES)
             archivo_esco_crfPYMES.set_axis(['0', 'Clase', 'Número','Nombre','4','5','Cuotapartes'], 
                     axis='columns', inplace=True)
             nuevo = archivo_esco_crfPYMES.drop([0,1,2,3],axis=0)
             # data.loc[1,2[columna,columna]]
-
+            
 
             ########### PRIMERO FILTRAMOS POR LOS PYMES #######################
             PYMES_B = nuevo['Clase'] == 'B - Institucional'
             PYMESB = nuevo[PYMES_B].set_index('Número')
-
+           
             PYMESbo = archivo_bo['Instrumento - Símbolo'] == 'PYMES'
             PYMES_BO = archivo_bo[PYMESbo].set_index('Cuenta - Nro') 
 
             archivo_PYMESA_esco = conciliarEsco(PYMES_BO,PYMESB)
             archivo_PYMESA_bo = conciliarBO(PYMES_BO,PYMESB)
-
-
+            
+           
             ################ HACEMOS LA CONCI CREANDO UN NUEVO DATAFRAME ##############  
 
             conci_lista_PYMESB_esco = pd.DataFrame(archivo_PYMESA_esco)
@@ -911,7 +1105,7 @@ def main():
             with ExcelWriter('CONCI_PYMES_COHEN.xlsx') as writer: 
                 conci_lista_PYMESB_esco.to_excel(writer,sheet_name='PYMESB_ESCO',index=False)  
                 conci_lista_PYMESB_bo.to_excel(writer,sheet_name='PYMESB_BO',index=False)  
-
+            
             control_file = 'CONCI_PYMES_COHEN.xlsx'
             with open(control_file, 'rb') as f:
                 s = f.read()
@@ -924,9 +1118,9 @@ def main():
 
         nuevo_xls = []
         solo_inmediato = []
-
+       
         for linea in archivo.values:
-
+            
             comitente = linea[0]
             codigo = linea[1]
             tipo = linea[3]
@@ -945,20 +1139,20 @@ def main():
                         linea[5] = 'Diferido'
 
             nuevo_xls.append(linea)  
-
+ 
         columnas = ['Comitente - Número','Instrumento - Código caja','Instrumento - Símbolo','Transferencia - Tipo','Transferencia - Cantidad Total','Transferencia - Tratamiento'] 
         nuevo_xls = pd.DataFrame(nuevo_xls, columns=columnas)              
         solo_inmediato = pd.DataFrame(solo_inmediato, columns=columnas)              
-
+        
 
         st.dataframe(nuevo_xls)
         # print(solo_inmediato)
 
 
         ################################ EXCEL PREPARACION #############################
+     
 
-
-
+        
         lista_tsa= []
 
         # -----------------PRIMERAS DOS LINEAS OBLIGATORIAS DEL TXT------------------------------------------
@@ -983,7 +1177,7 @@ def main():
             tipo = str(nuevo_xls['Transferencia - Tratamiento'][valor])
             lado = str(nuevo_xls['Transferencia - Tipo'][valor])
             comitente = str(comit)  
-
+            
             if tipo=='Diferido' and lado=='Venta':
 
                 ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
@@ -992,7 +1186,7 @@ def main():
 
                 ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
                 lista_tsa.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'7046'10000'N'00'0000'0000'N"+"\r\n")    
-
+       
 
         # LINEA EJEMPLO
         #"1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"
@@ -1025,9 +1219,9 @@ def main():
 
 
         ################################ TSA EXTRA PREPARACION #############################
+     
 
-
-
+        
         tsa_extra= []
 
         # -----------------PRIMERAS DOS LINEAS OBLIGATORIAS DEL TXT------------------------------------------
@@ -1052,7 +1246,7 @@ def main():
             # tipo = str(solo_inmediato['Transferencia - Tratamiento'][valor])
             # lado = str(solo_inmediato['Transferencia - Tipo'][valor])
             comitente_extra = str(comit)  
-
+            
             # if tipo=='Diferido' and lado=='Venta':
 
             #     ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
@@ -1061,7 +1255,7 @@ def main():
 
                 ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
             tsa_extra.append("1'I'E'0046'"+comitente_extra+"'"+especie_extra+"       '"+cuotas_extra+"'7046'10000'N'00'0000'0000'N"+"\r\n")    
-
+       
 
         # LINEA EJEMPLO
         #"1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"
@@ -1098,14 +1292,14 @@ def main():
 
         with ExcelWriter('TSA_OPS.xlsx') as writer:
                 nuevo_xls.to_excel(writer,sheet_name='TSA',index=False)  
-
+            
         control_file = 'TSA_OPS.xlsx'
         with open(control_file, 'rb') as f:
             s = f.read()
 
         download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
         st.markdown(download_button_str, unsafe_allow_html=True)              
-
+                        
 
 if __name__ == '__main__':
     main()      
