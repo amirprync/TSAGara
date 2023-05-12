@@ -61,11 +61,11 @@ reinv2 = st.sidebar.file_uploader("Carga tu xlsx de reinversión", type=['xlsx']
 st.sidebar.markdown("---")
 
 st.sidebar.title("solo TEST para CNV")
-TEST = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar TEST", type=['xlsx'], key="test_file")
+TEST = st.sidebar.file_uploader("Carga tu xlsxT", type=['xlsx'], key="test_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Conci ESCO vs BO")
-bo = st.sidebar.file_uploader("Carga tu xlsx de FONDOS COHEN de BO !!!!", type=['xlsx'], key="esco_bo_conci_file")
+bo = st.sidebar.file_uploader("Carga tu xlsx de Reinversion", type=['xlsx'], key="esco_bo_conci_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("LIQUIDACIÓN TSA !!!!!!!!!!!!!!!!!!!!")
