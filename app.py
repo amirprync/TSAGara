@@ -848,7 +848,7 @@ def main():
         nuevo10000 = tablero_xls[moneda_10000]
         nuevo8000 = tablero_xls[moneda_8000]
 
-        reinversion_xls = nuevo7000.append(nuevo10000)
+        reinversion_xls = nuevo7000.append(nuevo10000, ignore_index=True)
         reinversion_xls = reinversion_xls.append(nuevo8000)
       
         reinversion_xls = reinversion_xls.reindex(columns=['Número','Comitente Descripción','Fecha','Moneda','Comitente Número',
