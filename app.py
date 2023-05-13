@@ -64,7 +64,7 @@ st.sidebar.title("solo TEST para CNV")
 TEST = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar TEST", type=['xlsx'], key="test_file")
 st.sidebar.markdown("---")
 
-st.sidebar.title("Conci ESCO vs BO")
+st.sidebar.title("Reinversion")
 bo = st.sidebar.file_uploader("Carga tu xlsx de FONDOS COHEN de BO !!!!", type=['xlsx'], key="esco_bo_conci_file")
 st.sidebar.markdown("---")
 
@@ -803,92 +803,82 @@ def main():
             st.markdown(download_button_str, unsafe_allow_html=True)                 
 
     if bo:
+        columnas = ['Comitente Número','Moneda','Importe']
+        tablero = pd.read_excel(reinv, usecols=columnas, engine='openpyxl')
+        tablero_xls = pd.read_excel(reinv,engine='openpyxl')
+        comit = tablero['Comitente Número']
+        # st.text(comit)
 
-        columnas = ['Comitente - Descripción','Instrumento - Símbolo','Instrumento - Denominación','Cuenta - Nro','Saldo Total']
-        archivo_bo = pd.read_excel(bo, usecols=columnas, engine='openpyxl')
-        archivo_esco_plus = st.file_uploader("Carga tu xlsx de PLUS de ESCO !!!!!!", type=['xls'])
-        archivo_esco_crf = st.file_uploader("Carga tu xlsx de CRF de ESCO !!!!!!", type=['xls'])
-        archivo_esco_crfDOL = st.file_uploader("Carga tu xlsx de CRF DOLAR de ESCO !!!!!!", type=['xls'])
-        archivo_esco_crfPYMES = st.file_uploader("Carga tu xlsx de CRF PYMES de ESCO !!!!!!", type=['xls'])
+        st.dataframe(tablero)
+        # st.table(tablero)
+    
+        ################################ EXCEL PREPARACION #############################
+        
+        def crearSheet(archivo):
+            archivo = archivo
+            # print(archivo)
 
+            sheet = {'Fecha Concertacion':[],
+                      'Fecha Vencimiento':[],
+                      'Cuenta':[],
+                      'Concepto':[],
+                      'Debe':[],
+                      'Haber':[],
+                      'Contraparte - Custodia':[],
+                      'Contraparte - Depositante':[],
+                      'Contraparte - Cuenta':[]}
+    
+            for num in archivo.index:
+                # print(num)
+                
+                fecha = datetime.now()
+                fecha = fecha.strftime("%d/%m/%Y")
 
-        def conciliarEsco(archivo_bo,archivo_esco):
-            archivo_esco = archivo_esco
-            archivo_bo = archivo_bo
-            
-            conci_LISTA_esco = {'NOMBRE':[],'COMITENTE':[],'CP QUE FALTAN EN BO':[]}
-            
-            for comitente in archivo_esco.index:
+                sheet['Fecha Concertacion'].append(fecha)         
+                sheet['Fecha Vencimiento'].append(fecha)         
+                sheet['Cuenta'].append(archivo['Comitente Número'][num])         
+                sheet['Concepto'].append(archivo['Tipo'][num])        
+                sheet['Debe'].append('0,00')         
+                sheet['Haber'].append(archivo['Importe'][num])
+                sheet['Contraparte - Custodia'].append('CAJAVAL')
+                sheet['Contraparte - Depositante'].append('0046')
+                sheet['Contraparte - Cuenta'].append(archivo['Comitente Número'][num])
 
-                esco_cp = archivo_esco.loc[comitente]
-                esco_nombre = esco_cp['Nombre']
-                esco_cp = esco_cp['Cuotapartes']
+            sheet = pd.DataFrame(sheet)
+            return sheet            
 
-                if esco_cp > 0:
-                    
-                    if comitente in archivo_bo.index:
+        moneda_7000 = tablero_xls['Moneda'] == 'Dolar Renta Exterior - 7.000' 
+        moneda_10000 = tablero_xls['Moneda'] == 'Dolar Renta Local - 10.000'
+        moneda_8000 = tablero_xls['Moneda'] == 'Pesos Renta - 8.000'
+        nuevo7000 = tablero_xls[moneda_7000]
+        nuevo10000 = tablero_xls[moneda_10000]
+        nuevo8000 = tablero_xls[moneda_8000]
 
-                        bo_cp = archivo_bo.loc[comitente]
-                        bo_cp = bo_cp['Saldo Total']
+        reinversion_xls = nuevo7000.append(nuevo10000)
+        reinversion_xls = reinversion_xls.append(nuevo8000)
+      
+        reinversion_xls = reinversion_xls.reindex(columns=['Número','Comitente Descripción','Fecha','Moneda','Comitente Número',
+            'Importe','Tipo','Banco','Tipo de Cuenta','Sucursal','Cuenta','CBU','Tipo de identificador impositivo','Número de identificador impositivo',
+            'Titular','Estado'])
 
-                        if esco_cp == bo_cp:
+        sheet_7000 = crearSheet(nuevo7000.set_index('Número'))
+        sheet_10000 = crearSheet(nuevo10000.set_index('Número'))
+        sheet_8000 = crearSheet(nuevo8000.set_index('Número'))
 
-                            conci_LISTA_esco['COMITENTE'].append(comitente)
-                            conci_LISTA_esco['NOMBRE'].append(esco_nombre)
-                            conci_LISTA_esco['CP QUE FALTAN EN BO'].append('COINCIDE EXACTO')
-                        
-                        else:
-                            dif = esco_cp - bo_cp
-                            conci_LISTA_esco['COMITENTE'].append(comitente)
-                            conci_LISTA_esco['NOMBRE'].append(esco_nombre)
-                            conci_LISTA_esco['CP QUE FALTAN EN BO'].append(dif)
-                        
-                    else: 
-                        conci_LISTA_esco['COMITENTE'].append(comitente)
-                        conci_LISTA_esco['NOMBRE'].append(esco_nombre)
-                        conci_LISTA_esco['CP QUE FALTAN EN BO'].append('NO ESTÁ EL COMIT EN BO')
+        with ExcelWriter('REINVERSION_FECHA.xlsx') as writer:
+            reinversion_xls.to_excel(writer,sheet_name='Sheet1',index=False)
+            sheet_7000.to_excel(writer,sheet_name='7000',index=False)  
+            sheet_10000.to_excel(writer,sheet_name='10000',index=False)  
+            sheet_8000.to_excel(writer,sheet_name='8000',index=False)  
+        
+        control_file = 'REINVERSION_FECHA.xlsx'
+        with open(control_file, 'rb') as f:
+            s = f.read()
 
-            return conci_LISTA_esco            
-
-        def conciliarBO(archivo_bo,archivo_esco):
-            
-            archivo_esco = archivo_esco
-            archivo_bo = archivo_bo
-
-            conci_LISTA_bo = {'NOMBRE':[],'COMITENTE':[],'CP QUE FALTAN EN ESCO':[]}
-
-            for comitente in archivo_bo.index:
-
-                bo_cp = archivo_bo.loc[comitente]
-                bo_nombre = bo_cp['Comitente - Descripción']
-                bo_cp = bo_cp['Saldo Total']
-
-                if bo_cp > 0:
-                    
-                    if comitente in archivo_esco.index:
-
-                        esco_cp = archivo_esco.loc[comitente]
-                        esco_cp = esco_cp['Cuotapartes']
-
-                        if bo_cp == esco_cp:
-
-                            conci_LISTA_bo['COMITENTE'].append(comitente)
-                            conci_LISTA_bo['NOMBRE'].append(bo_nombre)
-                            conci_LISTA_bo['CP QUE FALTAN EN ESCO'].append('COINCIDE EXACTO')
-                        else:
-                            dif = bo_cp - esco_cp
-                            conci_LISTA_bo['COMITENTE'].append(comitente)
-                            conci_LISTA_bo['NOMBRE'].append(bo_nombre)
-                            conci_LISTA_bo['CP QUE FALTAN EN ESCO'].append(dif)
-                        
-                    else: 
-                        conci_LISTA_bo['COMITENTE'].append(comitente)
-                        conci_LISTA_bo['NOMBRE'].append(bo_nombre)
-                        conci_LISTA_bo['CP QUE FALTAN EN ESCO'].append('NO ESTÁ EL COMIT EN ESCO')
-
-            return conci_LISTA_bo     
-
-        if archivo_esco_plus:
+        download_button_str = download_button(s, control_file, f'EXCEL LISTO {control_file}')
+        st.markdown(download_button_str, unsafe_allow_html=True)
+        
+    if archivo_esco_plus:
             
             ######### Descarto las columnas que no me sirven y dejo limpio el excel ##########
             archivo_esco_plus = pd.read_excel(archivo_esco_plus)
