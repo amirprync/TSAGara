@@ -798,7 +798,7 @@ def main():
 
     if bo:
         columnas = ['Comitente Número','Moneda','Importe']
-        tablero = pd.read_excel(reinv, usecols=columnas, engine='openpyxl')
+        tablero = pd.read_excel(bo, usecols=columnas, engine='openpyxl')
         tablero_xls = pd.read_excel(bo,engine='openpyxl')
         comit = tablero['Comitente Número']
         # st.text(comit)
