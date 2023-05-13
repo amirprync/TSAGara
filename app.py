@@ -763,8 +763,8 @@ def main():
     
     if TEST:
         columnas = ['Comitente Número','Moneda','Importe']
-        tablero = pd.read_excel(test, usecols=columnas, engine='openpyxl')
-        tablero_xls = pd.read_excel(test,engine='openpyxl')
+        tablero = pd.read_excel(TEST, usecols=columnas, engine='openpyxl')
+        tablero_xls = pd.read_excel(TEST,engine='openpyxl')
         comit = tablero['Comitente Número']
         # st.text(comit)
 
