@@ -53,15 +53,15 @@ dolar_bo = st.sidebar.text_input("Precio dolar SENEBI BO", 'dolar')
 st.sidebar.markdown("---")
 
 st.sidebar.title("Archivo ENTREGA GRTIAS TSA")
-reinv = st.sidebar.file_uploader("Carga tu xlsx de reinversión", type=['xlsx'], key="gracias_tsa_reinv_file")
+reinv = st.sidebar.file_uploader("Carga tu xlsx de Garantias", type=['xlsx'], key="gracias_tsa_reinv_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Archivo RECEPCION GRTIAS TSA")
-reinv2 = st.sidebar.file_uploader("Carga tu xlsx de reinversión", type=['xlsx'], key="gracias_tsa_reinv2_file")
+reinv2 = st.sidebar.file_uploader("Carga tu xlsx de Garantias", type=['xlsx'], key="gracias_tsa_reinv2_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Reinversion")
-TEST = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar TEST", type=['xlsx'], key="test_file")
+TEST = st.sidebar.file_uploader("Carga tu xlsx de Reinversion", type=['xlsx'], key="test_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Conci ESCO vs BO")
