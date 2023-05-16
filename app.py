@@ -25,8 +25,6 @@ import time
 
 from PIL import Image
 
-
-
 hora = time.strftime("%y%m%d")
 
 # image = Image.open('imagen.png')
