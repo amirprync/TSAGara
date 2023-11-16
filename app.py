@@ -927,7 +927,7 @@ def main():
                     especie = renta[especie]
 
                     ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
-                    lista_reinv.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'0046'03'N'00'0000'0000'N"+"\r\n")
+                    lista_reinv.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'0046'01'N'00'0000'0000'N"+"\r\n")
        
 
         # LINEA EJEMPLO
