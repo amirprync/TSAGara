@@ -38,7 +38,7 @@ st.info('\nTablero de automatización TSA GARANTIAS y REVINVERSION('
                     ) 
 
 st.sidebar.title("Archivo TSA")
-filename = st.sidebar.file_uploader("Carga tu xlsx de suscri", type=['xlsx'], key="tsa_file")
+filename = st.sidebar.file_uploader("Carga tu xlsx de Rescates", type=['xlsx'], key="tsa_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Archivo ESCO")
