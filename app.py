@@ -177,8 +177,8 @@ def main():
                 cuotas = str(float(cuotas))
                 
                 ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
-               # lista_suscri.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'0309'000050046'N'00'2111'0000'N"+"\r\n")
-                lista_suscri.append("1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"+"\r\n")       
+                 lista_suscri.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'0309'000050046'N'00'2111'0000'N"+"\r\n")
+               # lista_suscri.append("1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"+"\r\n")       
 
         # LINEA EJEMPLO
         #"1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"
