@@ -212,56 +212,83 @@ def main():
         # os.remove("suscri_tsa1.txt")
     
     if esco:
-        df = esco.read()
-        archivo = df.decode('utf-8')
-        # listo = st.text(archivo)
+               columnas = ['Comitente','CodigoCaja','Cuotas']
+        tablero = pd.read_excel(filename, usecols=columnas)
+        comit = tablero['Comitente']
+        # st.text(comit)
 
-        suscri = open("suscri.txt", "w") # W puedo editar el archivo, o crea si no esta
-        rescate = open("rescate.txt", "w")
+        st.dataframe(tablero)
+        # st.table(tablero)
+    
+     
 
-        lista_suscri = []
-        lista_rescate = []
         
-        f = archivo.split(sep=None, maxsplit=-1)
+        lista_suscri= []
 
-        for x in f:
-            # print(x)
-            tipo = x[0]
-            if tipo=="S":
-                valid = x[8]
-                if valid!=";":   
-                    linea = x[8:-20]+"\r\n"
-                    lista_suscri.append(linea)
-                          
-            elif tipo=="R":
-                valid = x[8]
-                if valid!=";":
-                    linea2 = x[8:]+";"+"\r\n"
-                    lista_rescate.append(linea2)
-                   
+        # -----------------PRIMERAS DOS LINEAS OBLIGATORIAS DEL TXT------------------------------------------
+        linea1 = "00Aftfaot    20"+hora+"1130560000000"
+        lista_suscri.append(linea1)      
 
-        suscri.writelines(lista_suscri)          
-        rescate.writelines(lista_rescate)          
-        suscri.close()
-        rescate.close()
-        
+        incio = "\r\n"+"0"+hora+"FTFAOT0046"+"\r\n"
+        lista_suscri.append(incio)
+
+        # -----------------AGREGAMOS LINEAS SEGUN LA CANTIDAD DE SUCRI QUE TENGAMOS-----------------------------------------
+
+        # especie = 5 digitos 
+        # cuotas = 00000000000.0000000  ( 11 y 7) 
+        # comitente = 9 digitos 
+        especie = 0
+        cuotas = 0
+        comitente = 0
+
+        for valor,comit in enumerate(tablero['Comitente']):
+            especie = str(tablero['CodigoCaja'][valor])
+            cuotas = str(tablero['Cuotas'][valor])
+            comitente = str(comit)  
+            
+            if especie!="nan" and cuotas!="nan" and comitente!="nan":
+
+                #### ESPECIE ###############################################
+                especie = str(int(float(especie)))
+                #### COMITENTE #############################################
+                comitente = str(int(float(comitente)))
+                #### CUOTAS ################################################
+                cuotas = str(float(cuotas))
+                
+                ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
+               # lista_suscri.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'0309'000050046'N'00'2111'0000'N"+"\r\n")
+                lista_suscri.append("1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"+"\r\n")       
+
+        # LINEA EJEMPLO
+        #"1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"
+
+        # ------------------------AGREGAMOS LINEA FINAL---------------------------------------
+
+        # LINEA FINAL
+        num_lineas = len(lista_suscri)-1 # restamos la primera que no cuenta
+        # print(len(str(num_lineas)))
+        if len(str(num_lineas))==1:
+            num_lineas = "0" + str(num_lineas)
+        linea_final = "99Aftfaot    20"+hora+"1130560000000"+str(num_lineas)+"\r\n"
+        lista_suscri.append(linea_final)
+
+        # AGREAGR NUMERO DE FILAS A LA PRIMER LINEA
+        lista_suscri[0] = lista_suscri[0]+str(num_lineas)
+
+        datos=open("modelo.txt","w")
+        datos.writelines(lista_suscri)
+        datos.close()
 
 
-        suscri_file = "suscri.txt"
-        rescate_file = "rescate.txt"
-
-        with open(suscri_file, 'rb') as f:
+        nuevo = "modelo.txt"
+        with open(nuevo, 'rb') as f:
             s = f.read()
+            print(s)
 
-        download_button_str = download_button(s, suscri_file, f'SUSCRI {suscri_file}')
-        st.markdown(download_button_str, unsafe_allow_html=True)  
+        download_button_str = download_button(s, nuevo, f'Archivo TSA {nuevo}')
+        st.markdown(download_button_str, unsafe_allow_html=True)
 
-        with open(rescate_file, 'rb') as f:
-            s = f.read()
-
-        download_button_str = download_button(s, rescate_file, f'RESCATE {rescate_file}')
-        st.markdown(download_button_str, unsafe_allow_html=True)     
-
+        # os.remove("suscri_tsa1.txt")
     if reinv:
         columnas = ['Comitente Número','Moneda','Importe']
         tablero = pd.read_excel(reinv, usecols=columnas, engine='openpyxl')
