@@ -41,8 +41,8 @@ st.sidebar.title("Archivo TSA RESCATES")
 filename = st.sidebar.file_uploader("Carga tu xlsx de Rescates", type=['xlsx'], key="tsa_file")
 st.sidebar.markdown("---")
 
-st.sidebar.title("Archivo ESCO")
-esco = st.sidebar.file_uploader("Carga tu TXT ESCO", type=['txt'], key="esco_file")
+st.sidebar.title("Archivo TSA SUSCRIPCIONES")
+esco = st.sidebar.file_uploader("Carga tu xlsx de Suscripciones", type=['txt'], key="esco_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Conciliación SENEBI BO")
