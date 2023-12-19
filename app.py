@@ -37,7 +37,7 @@ st.info('\nTablero de automatización TSA GARANTIAS y REVINVERSION('
                     'https://cohen.com.ar/).\n\n'
                     ) 
 
-st.sidebar.title("Archivo TSA CHEQUEAR SI QUEDO SUSCRI O RESCATES")
+st.sidebar.title("Archivo TSA RESCATES")
 filename = st.sidebar.file_uploader("Carga tu xlsx de Rescates", type=['xlsx'], key="tsa_file")
 st.sidebar.markdown("---")
 
