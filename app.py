@@ -42,7 +42,7 @@ filename = st.sidebar.file_uploader("Carga tu xlsx de Rescates", type=['xlsx'], 
 st.sidebar.markdown("---")
 
 st.sidebar.title("Archivo TSA SUSCRIPCIONES")
-esco = st.sidebar.file_uploader("Carga tu xlsx de Suscripciones", type=['txt'], key="esco_file")
+esco = st.sidebar.file_uploader("Carga tu xlsx de Suscripciones", type=['xlsx'], key="esco_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("Conciliación SENEBI BO")
@@ -212,7 +212,7 @@ def main():
         # os.remove("suscri_tsa1.txt")
     
     if esco:
-        columnas = ['Comitente','CodigoCaja','Cuotas']
+          columnas = ['Comitente','CodigoCaja','Cuotas']
         tablero = pd.read_excel(filename, usecols=columnas)
         comit = tablero['Comitente']
         # st.text(comit)
@@ -256,8 +256,8 @@ def main():
                 cuotas = str(float(cuotas))
                 
                 ################ AGREGO EL FORMATO A NUESTRO ARCHIVO
-               # lista_suscri.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'0309'000050046'N'00'2111'0000'N"+"\r\n")
-                lista_suscri.append("1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"+"\r\n")       
+                lista_suscri.append("1'I'E'0046'"+comitente+"'"+especie+"       '"+cuotas+"'0309'000050046'N'00'2111'0000'N"+"\r\n")
+               # lista_suscri.append("1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"+"\r\n")       
 
         # LINEA EJEMPLO
         #"1'I'E'0046'000000003'"+especie+"       '"+cuotas+"'0046'"+comitente+"'N'00'0000'0000'N"
@@ -289,6 +289,7 @@ def main():
         st.markdown(download_button_str, unsafe_allow_html=True)
 
         # os.remove("suscri_tsa1.txt")
+
     if reinv:
         columnas = ['Comitente Número','Moneda','Importe']
         tablero = pd.read_excel(reinv, usecols=columnas, engine='openpyxl')
