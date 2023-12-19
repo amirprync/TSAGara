@@ -212,7 +212,7 @@ def main():
         # os.remove("suscri_tsa1.txt")
     
     if esco:
-               columnas = ['Comitente','CodigoCaja','Cuotas']
+        columnas = ['Comitente','CodigoCaja','Cuotas']
         tablero = pd.read_excel(filename, usecols=columnas)
         comit = tablero['Comitente']
         # st.text(comit)
