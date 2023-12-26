@@ -213,7 +213,7 @@ def main():
     
     if esco:
         columnas = ['Comitente','CodigoCaja','Cuotas']
-        tablero = pd.read_excel(filename, usecols=columnas)
+        tablero = pd.read_excel(esco, usecols=columnas)
         comit = tablero['Comitente']
         # st.text(comit)
 
