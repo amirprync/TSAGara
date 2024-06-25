@@ -63,7 +63,7 @@ TEST = st.sidebar.file_uploader("Carga tu xlsx de Reinversion", type=['xlsx'], k
 st.sidebar.markdown("---")
 
 st.sidebar.title("NUEVO TSA")
-bo = st.sidebar.file_uploader("Carga tu xlsx de FONDOS COHEN de BO !!!!", type=['xlsx'], key="esco_bo_conci_file")
+bo = st.sidebar.file_uploader("Carga tu xlsx de Reinversion", type=['xlsx'], key="esco_bo_conci_file")
 st.sidebar.markdown("---")
 
 st.sidebar.title("LIQUIDACIÓN TSA !!!!!!!!!!!!!!!!!!!!")
