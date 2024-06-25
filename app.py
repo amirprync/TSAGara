@@ -62,7 +62,7 @@ st.sidebar.title("Reinversion")
 TEST = st.sidebar.file_uploader("Carga tu xlsx de Reinversion", type=['xlsx'], key="test_file")
 st.sidebar.markdown("---")
 
-st.sidebar.title("Conci ESCO vs BO")
+st.sidebar.title("NUEVO TSA")
 bo = st.sidebar.file_uploader("Carga tu xlsx de FONDOS COHEN de BO !!!!", type=['xlsx'], key="esco_bo_conci_file")
 st.sidebar.markdown("---")
 
