@@ -67,7 +67,7 @@ st.sidebar.title("solo TEST para CNV")
 TEST = st.sidebar.file_uploader("Carga tu xlsx del mes a controlar TEST", type=['xlsx'], key="test_file")
 st.sidebar.markdown("---")
 
-st.sidebar.title("Conci ESCO vs BO")
+st.sidebar.title("Reinversion Nueva")
 bo = st.sidebar.file_uploader("Carga tu xlsx de FONDOS COHEN de BO !!!!", type=['xlsx'], key="esco_bo_conci_file")
 st.sidebar.markdown("---")
 
