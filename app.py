@@ -58,7 +58,7 @@ st.sidebar.title("Archivo RECEPCION GRTIAS TSA")
 reinv2 = st.sidebar.file_uploader("Carga tu xlsx de Garantias", type=['xlsx'], key="gracias_tsa_reinv2_file")
 st.sidebar.markdown("---")
 
-st.sidebar.title("Reinversion")
+st.sidebar.title("Reinversionnnnnnn")
 TEST = st.sidebar.file_uploader("Carga tu xlsx de Reinversion", type=['xlsx'], key="test_file")
 st.sidebar.markdown("---")
 
