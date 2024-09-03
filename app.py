@@ -987,7 +987,8 @@ def main():
 
         download_button_str = download_button(s, nuevo, f'Archivo REINV TSA {nuevo}')
         st.markdown(download_button_str, unsafe_allow_html=True)
-    if bo:
+      
+  if bo:
 
         columnas = ['Comitente - Descripción','Instrumento - Símbolo','Instrumento - Denominación','Cuenta - Nro','Saldo Total']
         archivo_bo = pd.read_excel(bo, usecols=columnas, engine='openpyxl')
